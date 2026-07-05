@@ -26,10 +26,35 @@ public class GuardApiController : ControllerBase
         var user = await _db.Users.FirstOrDefaultAsync(u => u.CardId == request.CardId);
 
         if (user == null)
+        {
+            // Логируем попытку с неизвестной картой
+            _db.AccessLogs.Add(new AccessLog
+            {
+                CardId = request.CardId,
+                UserName = "Неизвестный",
+                PpId = request.PpId,
+                Timestamp = DateTime.Now,
+                Result = "denied",
+                Reason = "Карта не найдена"
+            });
+            await _db.SaveChangesAsync();
+
             return Ok(new { allowed = false, message = "Карта не найдена" });
+        }
 
         if (user.IsBlocked)
         {
+            _db.AccessLogs.Add(new AccessLog
+            {
+                CardId = request.CardId,
+                UserName = user.FullName,
+                PpId = request.PpId,
+                Timestamp = DateTime.Now,
+                Result = "denied",
+                Reason = "Пользователь заблокирован"
+            });
+            await _db.SaveChangesAsync();
+
             await Notify(new
             {
                 eventType = "access_denied",
@@ -55,6 +80,17 @@ public class GuardApiController : ControllerBase
                 user.IsBlocked = true;
                 await _db.SaveChangesAsync();
 
+                _db.AccessLogs.Add(new AccessLog
+                {
+                    CardId = request.CardId,
+                    UserName = user.FullName,
+                    PpId = request.PpId,
+                    Timestamp = DateTime.Now,
+                    Result = "denied",
+                    Reason = "Блокировка за 3 неудачные попытки"
+                });
+                await _db.SaveChangesAsync();
+
                 await Notify(new
                 {
                     eventType = "user_blocked",
@@ -65,6 +101,17 @@ public class GuardApiController : ControllerBase
                 });
                 return Ok(new { allowed = false, message = "Пользователь заблокирован за 3 нарушения", userName = user.FullName });
             }
+            await _db.SaveChangesAsync();
+
+            _db.AccessLogs.Add(new AccessLog
+            {
+                CardId = request.CardId,
+                UserName = user.FullName,
+                PpId = request.PpId,
+                Timestamp = DateTime.Now,
+                Result = "denied",
+                Reason = $"Время доступа истекло (работаем с {start} до {end})"
+            });
             await _db.SaveChangesAsync();
 
             await Notify(new
@@ -80,6 +127,16 @@ public class GuardApiController : ControllerBase
 
         // Успешный проход
         user.FailedAttempts = 0;
+
+        _db.AccessLogs.Add(new AccessLog
+        {
+            CardId = request.CardId,
+            UserName = user.FullName,
+            PpId = request.PpId,
+            Timestamp = DateTime.Now,
+            Result = "allowed",
+            Reason = "Доступ разрешён"
+        });
         await _db.SaveChangesAsync();
 
         await Notify(new
