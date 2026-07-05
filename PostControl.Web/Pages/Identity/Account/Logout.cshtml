@@ -1,0 +1,9 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@using PostControl.Web.Models
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    await SignInManager.SignOutAsync();
+    Response.Redirect("/");
+}

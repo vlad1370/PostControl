@@ -1,0 +1,27 @@
+﻿@page
+@using QRCoder
+@using Microsoft.AspNetCore.Identity
+@using PostControl.Web.Models
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    var cardId = Request.Query["cardId"].ToString();
+    if (string.IsNullOrEmpty(cardId))
+    {
+        Response.StatusCode = 404;
+        return;
+    }
+
+    // Генерируем QR-код
+    using var qrGenerator = new QRCodeGenerator();
+    var qrData = qrGenerator.CreateQrCode(cardId, QRCodeGenerator.ECCLevel.Q);
+    var qrCode = new QRCode(qrData);
+    var qrBitmap = qrCode.GetGraphic(20);
+
+    using var ms = new MemoryStream();
+    qrBitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+    var bytes = ms.ToArray();
+
+    Response.ContentType = "image/png";
+    await Response.Body.WriteAsync(bytes);
+}

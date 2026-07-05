@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using PostControl.Web.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark">@User.Identity?.Name</a>
+        </li>
+        <li class="nav-item">
+            <button onclick="location.href='/Identity/Account/Logout'" class="nav-link btn btn-link text-dark">Выйти</button>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Регистрация</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Вход</a>
+        </li>
+    }
+</ul>

@@ -1,0 +1,85 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Регистрация сотрудника";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>📝 Регистрация сотрудника</h4>
+                    <small>Создайте аккаунт для доступа к системе</small>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <!-- ФИО -->
+                        <div class="mb-3">
+                            <label asp-for="Input.FullName" class="form-label">ФИО</label>
+                            <input asp-for="Input.FullName" class="form-control" placeholder="Иванов Иван Иванович" />
+                            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label asp-for="Input.Email" class="form-label">Email</label>
+                            <input asp-for="Input.Email" class="form-control" placeholder="ivanov@company.ru" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <!-- ID карты (генерируется автоматически) -->
+                        <div class="mb-3">
+                            <label class="form-label">ID карты</label>
+                            <input class="form-control" value="@Model.GeneratedCardId" readonly disabled />
+                            <input asp-for="Input.CardId" type="hidden" />
+                            <small class="text-muted">ID генерируется автоматически</small>
+                        </div>
+
+                        <!-- Время доступа -->
+                        <div class="mb-3">
+                            <label asp-for="Input.AccessLevel" class="form-label">Уровень доступа</label>
+                            <select asp-for="Input.AccessLevel" class="form-select">
+                                <option value="employee">Сотрудник</option>
+                                <option value="manager">Руководитель</option>
+                                <option value="vip">Управляющий</option>
+                                <option value="visitor">Посетитель</option>
+                            </select>
+                            <small class="text-muted">Время доступа определяется автоматически</small>
+                        </div>
+
+                        <!-- Пароль -->
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label">Пароль</label>
+                            <input asp-for="Input.Password" class="form-control" type="password" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.ConfirmPassword" class="form-label">Подтверждение пароля</label>
+                            <input asp-for="Input.ConfirmPassword" class="form-control" type="password" />
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Зарегистрироваться
+                        </button>
+                    </form>
+
+                    <div class="mt-3 text-center">
+                        <p class="text-muted small">
+                            После регистрации вы сможете войти в личный кабинет
+                            и показать QR-код для прохода
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

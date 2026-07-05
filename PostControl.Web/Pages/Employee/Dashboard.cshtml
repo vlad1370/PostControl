@@ -1,0 +1,63 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@using PostControl.Web.Models
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Employee")]
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = "Мой пропуск";
+    var user = await UserManager.GetUserAsync(User);
+    if (user == null) return;
+
+    string GetAccessLevelName(string level)
+    {
+        return level switch
+        {
+            "employee" => "Сотрудник",
+            "manager" => "Руководитель",
+            "vip" => "Управляющий",
+            "visitor" => "Посетитель",
+            _ => level
+        };
+    }
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>🎫 МОЙ ПРОПУСК</h3>
+                </div>
+                <div class="card-body text-center">
+                    <!-- Информация о пользователе -->
+                    <div class="mb-3">
+                        <h4>@user.FullName</h4>
+                        <p class="text-muted">ID: @user.CardId</p>
+                        <p>Время доступа: <span class="badge bg-info">@user.TimeWindows</span></p>
+                        <p>Уровень доступа: <span class="badge bg-secondary">@GetAccessLevelName(user.AccessLevel)</span></p>
+                    </div>
+
+                    <!-- QR-код -->
+                    <div class="border rounded p-3 mb-3 bg-light">
+                        <img src="@Url.Page("QR", new { cardId = user.CardId })"
+                             alt="QR-код"
+                             style="width: 200px; height: 200px;" />
+                        <div class="mt-2">
+                            <span class="badge @(user.IsBlocked ? "bg-danger" : "bg-success")">
+                                @(user.IsBlocked ? "🔴 ЗАБЛОКИРОВАН" : "🟢 АКТИВЕН")
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Статус -->
+                    <div class="alert alert-info mt-3">
+                        📱 Покажите QR-код охране для прохода
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
