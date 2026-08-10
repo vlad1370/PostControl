@@ -23,4 +23,8 @@
     <PackageReference Include="ZXing.Net" Version="0.16.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PostControl.Shared\PostControl.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

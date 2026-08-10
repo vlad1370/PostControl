@@ -7,7 +7,6 @@ public static class SeedData
 {
     public static async Task InitializeAsync(IServiceProvider services)
     {
-        // Используем ApplicationUser, а не IdentityUser!
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 

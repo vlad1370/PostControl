@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="PostControl.Server/PostControl.Server.csproj" />
+  <Project Path="PostControl.Shared/PostControl.Shared.csproj" />
   <Project Path="PostControl.Web/PostControl.Web.csproj" />
 </Solution>
