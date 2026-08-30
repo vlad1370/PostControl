@@ -23,7 +23,7 @@ static async Task HandleClientAsync(TcpClient client)
         using (client)
         {
             // ====== ПРОВЕРКА СЕРТИФИКАТА ======
-            string certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "server.pfx");
+            string certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "server.pfx");
             if (!File.Exists(certPath))
             {
                 Console.WriteLine($"[TCP] Сертификат не найден: {certPath}");
